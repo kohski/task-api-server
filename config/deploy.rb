@@ -5,7 +5,7 @@ lock '3.6.0'
 set :application, 'achieve'
 
 # cloneするgitのレポジトリ（xxxxxxxx：ユーザ名、yyyyyyyy：アプリケーション名）
-set :repo_url, 'https://github.com/xxxxxxxxx/yyyyyyyyy'
+set :repo_url, 'https://github.com/kohski/task-api-server'
 
 # deployするブランチ。デフォルトはmasterなのでなくても可。
 set :branch, ENV['BRANCH'] || 'master'
