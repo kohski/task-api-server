@@ -37,7 +37,7 @@ module DeviseTry
         resource '*',
           :headers => :any,
           expose:[:'access-token',:client,:uid],
-          :methods => [:get, :post, :options]
+          :methods => [:get, :post, :put, :patch, :delete, :options, :head]
       end
     end
   end
