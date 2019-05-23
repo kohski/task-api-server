@@ -5,14 +5,19 @@ module Api
 
       def index
         tasks = Task.order(created_at: :desc)
-        p tasks
+        # tasks_with_url = tasks.select{|task| task }
+        # tasks_with_url.each_with_index do |task, index|
+        #   task[:image_url] = "titim"
+        #   # task[:image_url] = tasks[index].picture_url
+        # end
+        
         render json: {
           status: 'SUCCESS',
           message: 'loaded oists',
           data: {
-            tasks: tasks,
-            current: current_user
-          }
+            tasks: tasks.to_json(methods:[:picture_url]),
+            current: current_user,
+          },
         }
       end
     
@@ -21,6 +26,20 @@ module Api
     
       def create
         task = Task.new(set_task);
+
+        if !params[:picture].empty?
+          image_match = params[:picture].match(/^data:(.*?);(?:.*?),(.*)$/)
+          mime_type, encoded_image = image_match.captures
+          extension = mime_type.split('/').second
+          decoded_image = Base64.decode64(encoded_image)
+          filename = "picture#{task.id}.#{extension}"
+          image_path = "#{Rails.root}/tmp/storage/#{filename}"
+          File.open(image_path, 'wb') do |f|
+            f.write(decoded_image)
+          end
+          task.picture.attach({ io: File.open(image_path), filename: filename, content_type: mime_type })  
+        end
+
         if task.save
           render json: {
             status: 'SUCCESS',
@@ -78,7 +97,7 @@ module Api
       private
 
       def set_task
-        params.require(:task).permit(:title, :content, :isDone)
+        params.require(:task).permit(:title, :content, :isDone, :picture)
       end
 
     end    
